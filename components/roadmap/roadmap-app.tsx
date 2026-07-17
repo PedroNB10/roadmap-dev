@@ -7,7 +7,7 @@ import { Header } from './header';
 import { AreaSection } from './area-section';
 import { TopicModal } from './topic-modal';
 import { AreaData, TopicData, ProgressMap } from '@/lib/types';
-import { loadBrowserProgress, saveBrowserProgress } from '@/lib/browser-progress';
+import { fetchProgress, updateProgress } from '@/lib/progress-client';
 import roadmapAreas from '@/data/roadmap.json';
 
 export function RoadmapApp() {
@@ -19,7 +19,7 @@ export function RoadmapApp() {
   const isSidebarOpen = Boolean(isModalOpen && selectedTopic);
 
   useEffect(() => {
-    setProgress(loadBrowserProgress());
+    fetchProgress().then(setProgress);
   }, []);
 
   const totalTopics = (areas ?? []).reduce((sum: number, a: AreaData) => sum + (a?.topics?.length ?? 0), 0);
@@ -30,13 +30,9 @@ export function RoadmapApp() {
     setIsModalOpen(true);
   }, []);
 
-  const handleToggleComplete = useCallback(async (slug: string, completed: boolean) => {
-    setProgress((prev: ProgressMap) => {
-      const nextProgress = { ...(prev ?? {}), [slug]: completed };
-      saveBrowserProgress(nextProgress);
-      return nextProgress;
-    });
-
+  const handleToggleComplete = useCallback((slug: string, completed: boolean) => {
+    setProgress((prev: ProgressMap) => ({ ...(prev ?? {}), [slug]: completed }));
+    updateProgress(slug, completed);
   }, []);
 
   return (
