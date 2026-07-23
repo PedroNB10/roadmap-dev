@@ -1,4 +1,6 @@
 {
   "computer-setup": true,
-  "command-line": true
+  "command-line": true,
+  "git-github": true,
+  "modules-packages": true
 }
